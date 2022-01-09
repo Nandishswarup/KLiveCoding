@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/ic_baseline_timer_24.xml" value="0.2835" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.38958333333333334" />
+        <entry key="app/src/main/res/layout/activity_start_timer.xml" value="0.4632766723632812" />
       </map>
     </option>
   </component>

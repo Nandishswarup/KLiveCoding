@@ -1,7 +1,6 @@
 package com.example.klivecoding.Service
 
-import android.R
-import android.app.*
+ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -12,7 +11,8 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.example.klivecoding.StartTimerActivity
+ import com.example.klivecoding.R
+ import com.example.klivecoding.StartTimerActivity
 import java.util.concurrent.TimeUnit
 
 
@@ -67,7 +67,7 @@ class CountDownTimerService : Service() {
     private fun CreateUpdateNotification(updateTime: String): Notification {
         val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
         val notification: Notification = notificationBuilder.setOngoing(true)
-            .setSmallIcon(R.drawable.ic_dialog_alert)
+            .setSmallIcon(R.drawable.ic_baseline_timer_24)
             .setContentTitle("Countdown Timer")
             .setContentText("TIME- " + updateTime)
             .setPriority(NotificationManager.IMPORTANCE_MIN)
