@@ -20,6 +20,10 @@ class CountDownTimerService : Service() {
     private var TIME_INFO = "time_info"
     private lateinit var counterclass: CounterClass
     private lateinit var countDownTime: String
+    val NOTIFICATION_CHANNEL_ID = "com.example.klivecoding"
+    val channelName = "My Background Service"
+    val NOTIFICATION_ID = 201
+
 
     override fun onBind(p0: Intent?): IBinder? {
 
@@ -38,8 +42,7 @@ class CountDownTimerService : Service() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun startMyOwnForeground() {
-        val NOTIFICATION_CHANNEL_ID = "com.example.klivecoding"
-        val channelName = "My Background Service"
+
         val chan = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
             channelName,
@@ -49,47 +52,31 @@ class CountDownTimerService : Service() {
         chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
         val manager = (getSystemService(NOTIFICATION_SERVICE) as NotificationManager)
         manager.createNotificationChannel(chan)
-        val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-        val notification: Notification = notificationBuilder.setOngoing(true)
-            .setSmallIcon(R.drawable.ic_dialog_alert)
-            .setContentTitle("App is running in background")
-            .setPriority(NotificationManager.IMPORTANCE_MIN)
-            .setCategory(Notification.CATEGORY_SERVICE)
-            .build()
-        startForeground(2, notification)
+        startForeground(NOTIFICATION_ID, CreateUpdateNotification(""))
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         countDownTime = intent!!.getStringExtra("countDownTime")!!;
-        counterclass = CounterClass(countDownTime.toLong(), 1000)
+        counterclass = CounterClass(countDownTime.toLong() * 1000 * 60, 1000)
         counterclass.start()
-/*
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel("com.example.klivecoding","KLiveCoding")
-        }
-        val notificationIntent = Intent(this, StartTimerActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
-
-        val notification: Notification = NotificationCompat.Builder(this)
-            .setContentText("Counter down service")
-            .setContentIntent(pendingIntent).build()
-
-        startForeground(202, notification)*/
-
         return START_NOT_STICKY
 
     }
 
-   /* @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel(channelId: String, channelName: String): String {
-        val chan = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_NONE)
-        chan.lightColor = Color.BLUE
-        chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
-        val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        service.createNotificationChannel(chan)
-        return channelId
-    }*/
+    private fun CreateUpdateNotification(updateTime: String): Notification {
+        val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+        val notification: Notification = notificationBuilder.setOngoing(true)
+            .setSmallIcon(R.drawable.ic_dialog_alert)
+            .setContentTitle("Countdown Timer")
+            .setContentText("TIME- " + updateTime)
+            .setPriority(NotificationManager.IMPORTANCE_MIN)
+            .setCategory(Notification.CATEGORY_SERVICE)
+            .build()
+        val mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        mNotificationManager.notify(201, notification)
+        return notification
+    }
 
 
     inner class CounterClass(millisInFuture: Long, countDownInterval: Long) :
@@ -117,8 +104,8 @@ class CountDownTimerService : Service() {
 
             val timerInfoIntent = Intent(TIME_INFO)
             timerInfoIntent.putExtra("VALUE", hms)
-            LocalBroadcastManager.getInstance(this@CountDownTimerService)
-                .sendBroadcast(timerInfoIntent)
+            sendBroadcast(timerInfoIntent)
+            CreateUpdateNotification(hms)
         }
 
         override fun onFinish() {
