@@ -19,11 +19,6 @@
             </intent-filter>
         </activity>
         <service android:name=".Service.CountDownTimerService"/>
-        <receiver android:name=".TimerStatusReceiver"
-            android:enabled="true"
-            android:exported="false"
-
-            ></receiver>
     </application>
 
 </manifest>

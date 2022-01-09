@@ -13,7 +13,7 @@ import com.example.klivecoding.Service.CountDownTimerService
 import com.example.klivecoding.databinding.ActivityStartTimerBinding
 
 
-class StartTimerActivity : AppCompatActivity(), TimerStatusReceiver.Callback {
+class StartTimerActivity : AppCompatActivity() {
     private lateinit var binding:ActivityStartTimerBinding
     private var TIME_INFO = "time_info"
     lateinit var  brReceiver:BroadcastReceiver
@@ -30,6 +30,8 @@ class StartTimerActivity : AppCompatActivity(), TimerStatusReceiver.Callback {
             val intent = Intent(this, CountDownTimerService::class.java)
             intent.putExtra("countDownTime",countDownTime)
             startForegroundService(intent)
+            disableButtons(true)
+
 
 
         }
@@ -39,7 +41,17 @@ class StartTimerActivity : AppCompatActivity(), TimerStatusReceiver.Callback {
                     if(intent.action==TIME_INFO)
                     {
                         var value=intent.getStringExtra("VALUE").toString()
+                        var countDownTime=intent.getStringExtra("countDownTime").toString()
+                        binding.edtTime.setText(countDownTime)
                         binding.tvCountDown.setText(value)
+                        disableButtons(true)
+
+                        if(value=="Completed")
+                        {
+                            disableButtons(false)
+                            binding.tvCountDown.setText("")
+                            stopService()
+                        }
                     }
 
                 }
@@ -49,9 +61,12 @@ class StartTimerActivity : AppCompatActivity(), TimerStatusReceiver.Callback {
 
     }
 
-    override fun onUpdate(time: String) {
-        Log.e("onUpdate ! !",time)
+    private fun disableButtons(b: Boolean) {
+
+        binding.btnSubmit.isEnabled=!b
+        binding.edtTime.isEnabled=!b
     }
+
 
     override fun onResume() {
         super.onResume()

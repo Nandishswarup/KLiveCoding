@@ -1,8 +1,7 @@
 package com.example.klivecoding.Service
 
  import android.app.*
-import android.content.Context
-import android.content.Intent
+ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.CountDownTimer
@@ -10,10 +9,8 @@ import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
  import com.example.klivecoding.R
- import com.example.klivecoding.StartTimerActivity
-import java.util.concurrent.TimeUnit
+ import java.util.concurrent.TimeUnit
 
 
 class CountDownTimerService : Service() {
@@ -102,17 +99,19 @@ class CountDownTimerService : Service() {
             )
             Log.e("hms", "" + hms)
 
-            val timerInfoIntent = Intent(TIME_INFO)
-            timerInfoIntent.putExtra("VALUE", hms)
-            sendBroadcast(timerInfoIntent)
+            val intentTimer = Intent(TIME_INFO)
+            intentTimer.putExtra("VALUE", hms)
+            intentTimer.putExtra("countDownTime", countDownTime)
+            countDownTime
+            sendBroadcast(intentTimer)
             CreateUpdateNotification(hms)
         }
 
         override fun onFinish() {
-            val timerInfoIntent = Intent(TIME_INFO)
-            timerInfoIntent.putExtra("VALUE", "Completed")
-            LocalBroadcastManager.getInstance(this@CountDownTimerService)
-                .sendBroadcast(timerInfoIntent)
+            val intentTimer = Intent(TIME_INFO)
+            intentTimer.putExtra("VALUE", "Completed")
+            intentTimer.putExtra("countDownTime", countDownTime)
+            sendBroadcast(intentTimer)
         }
     }
 }
