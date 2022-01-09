@@ -1,7 +1,7 @@
 package com.example.klivecoding.Service
 
- import android.app.*
- import android.content.Intent
+import android.app.*
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.CountDownTimer
@@ -9,8 +9,9 @@ import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
- import com.example.klivecoding.R
- import java.util.concurrent.TimeUnit
+import com.example.klivecoding.R
+import com.example.klivecoding.StartTimerActivity
+import java.util.concurrent.TimeUnit
 
 
 class CountDownTimerService : Service() {
@@ -63,16 +64,30 @@ class CountDownTimerService : Service() {
 
     private fun CreateUpdateNotification(updateTime: String): Notification {
         val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+
+
+        val notificationIntent = Intent(this, StartTimerActivity::class.java)
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, notificationIntent, PendingIntent.FLAG_ONE_SHOT
+        )
+
         val notification: Notification = notificationBuilder.setOngoing(true)
             .setSmallIcon(R.drawable.ic_baseline_timer_24)
             .setContentTitle("Countdown Timer")
             .setContentText("TIME- " + updateTime)
-            .setPriority(NotificationManager.IMPORTANCE_MIN)
-            .setCategory(Notification.CATEGORY_SERVICE)
+            .setPriority(NotificationManager.IMPORTANCE_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
             .build()
+        notification.flags = notification.flags or Notification.FLAG_AUTO_CANCEL
+
         val mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         mNotificationManager.notify(201, notification)
         return notification
+
+
     }
 
 
